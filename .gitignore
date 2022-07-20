@@ -122,3 +122,8 @@ work_dirs/
 *.pth
 *.py~
 *.sh~
+
+tutorial_exps/
+*.jpg
+*.json
+tests/
