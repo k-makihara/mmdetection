@@ -1,6 +1,13 @@
 from mmdet.apis import set_random_seed
 from mmcv import Config
+#cfg = Config.fromfile('./configs/solov2/solov2_r50_fpn_1x_coco.py')
 cfg = Config.fromfile('./configs/solov2/solov2_x101_dcn_fpn_3x_coco.py')
+#cfg = Config.fromfile('./configs/mask2former/mask2former_r50_lsj_8x2_50e_coco.py')
+#cfg = Config.fromfile('./configs/mask2former/mask2former_swin-s-p4-w7-224_lsj_8x2_50e_coco.py')
+#cfg = Config.fromfile('./configs/mask2former/mask2former_swin-l-p4-w12-384-in21k_lsj_16x1_100e_coco-panoptic.py')
+
+#cfg.num_things_classes = 1
+
 
 cfg.dataset_type = 'CocoDataset'
 cfg.img_norm_cfg = dict(
@@ -43,4 +50,4 @@ cfg.log_config.hooks = [
 
 print(f'Config:\n{cfg.pretty_text}')
 
-cfg.dump('./my_customconfig.py')
+cfg.dump('./my_customconfig_2.py')
