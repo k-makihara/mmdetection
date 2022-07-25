@@ -18,13 +18,11 @@ from .coco import CocoDataset
 
 
 @DATASETS.register_module()
-class CityscapesDataset(CocoDataset):
+class StiffnessSegDataset(CocoDataset):
 
-    CLASSES = ('person', 'rider', 'car', 'truck', 'bus', 'train', 'motorcycle',
-               'bicycle')
+    CLASSES = ('fore', )
 
-    PALETTE = [(220, 20, 60), (255, 0, 0), (0, 0, 142), (0, 0, 70),
-               (0, 60, 100), (0, 80, 100), (0, 0, 230), (119, 11, 32)]
+    PALETTE = [(220, 20, 60)]
 
     def _filter_imgs(self, min_size=32):
         """Filter images too small or without ground truths."""
@@ -37,13 +35,24 @@ class CityscapesDataset(CocoDataset):
             ids_in_cat |= set(self.coco.cat_img_map[class_id])
         # merge the image id sets of the two conditions and use the merged set
         # to filter out images if self.filter_empty_gt=True
-        ids_in_cat &= ids_with_ann
+        
+        #ids_in_cat &= ids_with_ann
+        ids_in_cat = ids_with_ann
+
         valid_img_ids = []
         for i, img_info in enumerate(self.data_infos):
-            img_id = img_info['id']        
+            img_id = img_info['id']
             ann_ids = self.coco.getAnnIds(imgIds=[img_id])
             ann_info = self.coco.loadAnns(ann_ids)
             all_iscrowd = all([_['iscrowd'] for _ in ann_info])
+            #print(img_id)
+            #print(ann_ids)
+            #print(ann_info)
+            #print(all_iscrowd)
+            #print(self.filter_empty_gt)
+            #print(self.img_ids[i] not in ids_in_cat or all_iscrowd)
+            #if i > 5:
+            #    import sys; sys.exit()
             if self.filter_empty_gt and (self.img_ids[i] not in ids_in_cat
                                          or all_iscrowd):
                 continue
@@ -76,14 +85,15 @@ class CityscapesDataset(CocoDataset):
             x1, y1, w, h = ann['bbox']
             if ann['area'] <= 0 or w < 1 or h < 1:
                 continue
-            if ann['category_id'] not in self.cat_ids:
-                continue
+            #if ann['category_id'] not in self.cat_ids:
+            #    continue
             bbox = [x1, y1, x1 + w, y1 + h]
             if ann.get('iscrowd', False):
                 gt_bboxes_ignore.append(bbox)
             else:
                 gt_bboxes.append(bbox)
-                gt_labels.append(self.cat2label[ann['category_id']])
+                #gt_labels.append(self.cat2label[ann['category_id']])
+                gt_labels.append(0)
                 gt_masks_ann.append(ann['segmentation'])
 
         if gt_bboxes:
@@ -104,6 +114,7 @@ class CityscapesDataset(CocoDataset):
             bboxes_ignore=gt_bboxes_ignore,
             masks=gt_masks_ann,
             seg_map=img_info['segm_file'])
+
         return ann
 
     def results2txt(self, results, outfile_prefix):

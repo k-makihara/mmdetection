@@ -62,7 +62,7 @@ def load_img_info(files):
 
         # for json encoding
         mask_rle['counts'] = mask_rle['counts'].decode()
-
+    
         anno = dict(
             iscrowd=iscrowd,
             category_id=category_id,
@@ -102,6 +102,7 @@ def cvt_annotations(image_infos, out_json_name):
     for label in CSLabels.labels:
         if label.hasInstances and not label.ignoreInEval:
             cat = dict(id=label.id, name=label.name)
+            print(cat)
             out_json['categories'].append(cat)
 
     if len(out_json['annotations']) == 0:
@@ -115,11 +116,11 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Convert Cityscapes annotations to COCO format')
     parser.add_argument('cityscapes_path', help='cityscapes data path')
-    parser.add_argument('--img-dir', default='leftImg8bit', type=str)
-    parser.add_argument('--gt-dir', default='gtFine', type=str)
+    parser.add_argument('--img-dir', default='leftImg8bit_trainvaltest/leftImg8bit', type=str)
+    parser.add_argument('--gt-dir', default='gtFine_trainvaltest/gtFine', type=str)
     parser.add_argument('-o', '--out-dir', help='output path')
     parser.add_argument(
-        '--nproc', default=1, type=int, help='number of process')
+        '--nproc', default=20, type=int, help='number of process')
     args = parser.parse_args()
     return args
 

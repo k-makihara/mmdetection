@@ -42,18 +42,15 @@ def load_img_info(files):
     for inst_id in unique_inst_ids:
         # For non-crowd annotations, inst_id // 1000 is the label_id
         # Crowd annotations have <1000 instance ids
-        iscrowd = 1
+        iscrowd = 0
         mask = np.asarray(inst_img == inst_id, dtype=np.uint8, order='F')
-
-        mask_rle = maskUtils.encode(mask)
+        mask_rle = maskUtils.encode(mask[:, :, None])[0]
 
         area = maskUtils.area(mask_rle)
         # convert to COCO style XYWH format
         bbox = maskUtils.toBbox(mask_rle)
 
-        #print(maskUtils.decode(mask_rle))
-        #mask_rle["counts"] = mask_rle["counts"].decode()
-        #print(mask_rle["counts"])
+        mask_rle['counts'] = mask_rle['counts'].decode()
 
 
         anno = dict(
@@ -94,7 +91,7 @@ def cvt_annotations(image_infos, out_json_name):
             ann_id += 1
         img_id += 1
 
-    out_json['categories'].append(dict(id="0", name="fore"))
+    out_json['categories'].append(dict(id=0, name="fore"))
 
     if len(out_json['annotations']) == 0:
         out_json.pop('annotations')
@@ -111,14 +108,14 @@ def parse_args():
     parser.add_argument('--gt-dir', default='gtFine', type=str)
     parser.add_argument('-o', '--out-dir', help='output path')
     parser.add_argument(
-        '--nproc', default=1, type=int, help='number of process')
+        '--nproc', default=8, type=int, help='number of process')
     args = parser.parse_args()
     return args
 
 
 def main():
     args = parse_args()
-    cityscapes_path = "/home/user/Downloads/dataset_iros2022_v4_mod/dataset"
+    cityscapes_path = "/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset"
     out_dir = cityscapes_path
     mmcv.mkdir_or_exist(out_dir)
 
@@ -138,13 +135,13 @@ def main():
                 print_tmpl='It took {}s to convert Cityscapes annotation'):
             if split == "train":
                 num_s = 0
-                num_e = 10
+                num_e = 8000
             elif split == "val":
-                num_s = 0
-                num_e = 10
+                num_s = 8000
+                num_e = 10000
             elif split == "test":
-                num_s = 0
-                num_e = 10
+                num_s = 8000
+                num_e = 10000
             files = collect_files(
                 osp.join(img_dir), osp.join(gt_dir), num_s, num_e)
             image_infos = collect_annotations(files, nproc=args.nproc)

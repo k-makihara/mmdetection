@@ -1,4 +1,4 @@
-dataset_type = 'StiffnessSegDataset'
+dataset_type = 'CityscapesDataset'
 data_root = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset'
 img_norm_cfg = dict(
     mean=[237.66000000000003, 237.66000000000003, 237.66000000000003],
@@ -8,14 +8,15 @@ train_pipeline = [
     dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
     dict(
         type='Resize',
-        img_scale=[(640, 480)],
+        img_scale=[(1333, 800), (1333, 768), (1333, 736), (1333, 704),
+                   (1333, 672), (1333, 640)],
         multiscale_mode='value',
         keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(
         type='Normalize',
-        mean=[237.66000000000003, 237.66000000000003, 237.66000000000003],
-        std=[23.205, 23.205, 23.205],
+        mean=[123.675, 116.28, 103.53],
+        std=[58.395, 57.12, 57.375],
         to_rgb=True),
     dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
@@ -25,15 +26,15 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(640, 480),
+        img_scale=(2048, 1024),
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
             dict(type='RandomFlip'),
             dict(
                 type='Normalize',
-                mean=[237.66000000000003, 237.66000000000003, 237.66000000000003],
-                std=[23.205, 23.205, 23.205],
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_rgb=True),
             dict(type='Pad', size_divisor=32),
             dict(type='ImageToTensor', keys=['img']),
@@ -41,87 +42,107 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=16,
+    samples_per_gpu=8,
     workers_per_gpu=1,
     train=dict(
-        type='StiffnessSegDataset',
-        ann_file=
-        '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/v4_mod_seg_train.json',
-        img_prefix=
-        '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/',
+        type='RepeatDataset',
+        times=8,
+        dataset=dict(
+            type='CityscapesDataset',
+            ann_file=
+            '/home/deepstation/Downloads/cityscapes/instancesonly_filtered_gtFine_train.json',
+            img_prefix=
+            '/home/deepstation/Downloads/cityscapes/leftImg8bit_trainvaltest/leftImg8bit/train/',
+            pipeline=[
+                dict(type='LoadImageFromFile'),
+                dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
+                dict(
+                    type='Resize',
+                    img_scale=[(2048, 800), (2048, 1024)],
+                    keep_ratio=True),
+                dict(type='RandomFlip', flip_ratio=0.5),
+                dict(
+                    type='Normalize',
+                    mean=[123.675, 116.28, 103.53],
+                    std=[58.395, 57.12, 57.375],
+                    to_rgb=True),
+                dict(type='Pad', size_divisor=32),
+                dict(type='DefaultFormatBundle'),
+                dict(
+                    type='Collect',
+                    keys=['img', 'gt_bboxes', 'gt_labels', 'gt_masks'])
+            ]),
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
             dict(
                 type='Resize',
-                img_scale=[(640, 480)],
+                img_scale=[(1333, 800), (1333, 768), (1333, 736), (1333, 704),
+                           (1333, 672), (1333, 640)],
                 multiscale_mode='value',
                 keep_ratio=True),
             dict(type='RandomFlip', flip_ratio=0.5),
             dict(
                 type='Normalize',
-                mean=[237.66000000000003, 237.66000000000003, 237.66000000000003],
-                std=[23.205, 23.205, 23.205],
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_rgb=True),
             dict(type='Pad', size_divisor=32),
             dict(type='DefaultFormatBundle'),
             dict(
                 type='Collect',
                 keys=['img', 'gt_bboxes', 'gt_labels', 'gt_masks'])
-        ],
-        classes=('fore', )),
+        ]),
     val=dict(
-        type='StiffnessSegDataset',
+        type='CityscapesDataset',
         ann_file=
-        '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/v4_mod_seg_val.json',
+        '/home/deepstation/Downloads/cityscapes/instancesonly_filtered_gtFine_val.json',
         img_prefix=
-        '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/',
+        '/home/deepstation/Downloads/cityscapes/leftImg8bit_trainvaltest/leftImg8bit/val/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
                 type='MultiScaleFlipAug',
-                img_scale=(640, 480),
+                img_scale=(2048, 1024),
                 flip=False,
                 transforms=[
                     dict(type='Resize', keep_ratio=True),
                     dict(type='RandomFlip'),
                     dict(
                         type='Normalize',
-                        mean=[237.66000000000003, 237.66000000000003, 237.66000000000003],
-                        std=[23.205, 23.205, 23.205],
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
                         to_rgb=True),
                     dict(type='Pad', size_divisor=32),
                     dict(type='ImageToTensor', keys=['img']),
                     dict(type='Collect', keys=['img'])
                 ])
-        ],
-        classes=('fore', )),
+        ]),
     test=dict(
-        type='StiffnessSegDataset',
+        type='CityscapesDataset',
         ann_file=
-        '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/v4_mod_seg_test.json',
+        '/home/deepstation/Downloads/cityscapes/instancesonly_filtered_gtFine_test.json',
         img_prefix=
-        '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/',
+        '/home/deepstation/Downloads/cityscapes/leftImg8bit_trainvaltest/leftImg8bit/test/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
                 type='MultiScaleFlipAug',
-                img_scale=(640, 480),
+                img_scale=(2048, 1024),
                 flip=False,
                 transforms=[
                     dict(type='Resize', keep_ratio=True),
                     dict(type='RandomFlip'),
                     dict(
                         type='Normalize',
-                        mean=[237.66000000000003, 237.66000000000003, 237.66000000000003],
-                        std=[23.205, 23.205, 23.205],
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
                         to_rgb=True),
                     dict(type='Pad', size_divisor=32),
                     dict(type='ImageToTensor', keys=['img']),
                     dict(type='Collect', keys=['img'])
                 ])
-        ],
-        classes=('fore', )))
+        ]))
 evaluation = dict(metric=['bbox', 'segm'])
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
@@ -169,7 +190,7 @@ model = dict(
         num_outs=5),
     mask_head=dict(
         type='SOLOV2Head',
-        num_classes=1,
+        num_classes=8,
         in_channels=256,
         feat_channels=512,
         stacked_convs=4,
