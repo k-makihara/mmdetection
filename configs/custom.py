@@ -14,16 +14,28 @@ cfg.img_norm_cfg = dict(
     mean=[0.932 * 255, 0.932 * 255, 0.932 * 255], std=[0.091 * 255, 0.091 * 255, 0.091 * 255])
 
 
-cfg.data.train.ann_file = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depthstiffness_coco_train.json'
-cfg.data.train.img_prefix = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
+#cfg.data.train.ann_file = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depthstiffness_coco_train.json'
+#cfg.data.train.img_prefix = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
+#cfg.data.train.classes = ('fore',)
+
+#cfg.data.val.ann_file = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depthstiffness_coco_val.json'
+#cfg.data.val.img_prefix = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
+#cfg.data.val.classes = ('fore',)
+
+#cfg.data.test.ann_file = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depthstiffness_coco_val.json'
+#cfg.data.test.img_prefix = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
+#cfg.data.test.classes = ('fore',)
+
+cfg.data.train.ann_file = '/home/user/Downloads/dataset_iros2022_v4_mod/dataset/v4_mod_seg_train.json'
+cfg.data.train.img_prefix = '/home/user/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
 cfg.data.train.classes = ('fore',)
 
-cfg.data.val.ann_file = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depthstiffness_coco_val.json'
-cfg.data.val.img_prefix = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
+cfg.data.val.ann_file = '/home/user/Downloads/dataset_iros2022_v4_mod/dataset/v4_mod_seg_val.json'
+cfg.data.val.img_prefix = '/home/user/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
 cfg.data.val.classes = ('fore',)
 
-cfg.data.test.ann_file = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depthstiffness_coco_val.json'
-cfg.data.test.img_prefix = '/home/deepstation/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
+cfg.data.test.ann_file = '/home/user/Downloads/dataset_iros2022_v4_mod/dataset/v4_mod_seg_test.json'
+cfg.data.test.img_prefix = '/home/user/Downloads/dataset_iros2022_v4_mod/dataset/Depth/'
 cfg.data.test.classes = ('fore',)
 
 cfg.model.mask_head.num_classes = 1
@@ -50,4 +62,4 @@ cfg.log_config.hooks = [
 
 print(f'Config:\n{cfg.pretty_text}')
 
-cfg.dump('./my_customconfig_2.py')
+cfg.dump('./my_customconfig_veluga.py')
